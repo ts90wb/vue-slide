@@ -1,0 +1,202 @@
+<!DOCTYPE html >
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width = device-width, initial-scale = 1.0, maximum-scale = 1.0, minimum-scale = 1.0, user-scalable = no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title> Document </title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        
+        .wrapper {
+            position: relative;
+            width: 502px;
+            height: 378px;
+            margin: 100px auto;
+            border: 1px solid #eee;
+            overflow: hidden;
+        }
+        
+        .wrapper:hover .btn span {
+            opacity: 1;
+        }
+        
+        .wrapper .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .wrapper .slide a {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .wrapper .btn {
+            display: -webkit-flex;
+            display: flex;
+            position: absolute;
+            top: 50%;
+            margin-top: -20px;
+            width: 100%;
+            height: 40px;
+            color: #fff;
+            font-size: 40px;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+        }
+        
+        .wrapper .btn span {
+            width: 40px;
+            text-align: center;
+            line-height: 40px;
+            opacity: 0;
+            transition: opacity .5s;
+            cursor: pointer;
+        }
+        
+        .wrapper .pagination {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            margin-left: -40px;
+            display: -webkit-flex;
+            display: flex;
+            width: 80px;
+            height: 10px;
+            justify-content: space-around;
+        }
+        
+        .wrapper .pagination li {
+            height: 100%;
+            width: 10px;
+            background: #fff;
+            border-radius: 50%;
+            list-style: none;
+            cursor: pointer;
+        }
+        
+        .wrapper .pagination li.active {
+            background: blue;
+        }
+        
+        .rimage-enter {
+            transform: translateX(100%);
+        }
+        
+        .rimage-enter-active,
+        .rimage-leave-active {
+            transition: all 1s ease;
+        }
+        
+        .rimage-leave {
+            transform: translateX(0);
+        }
+        
+        .rimage-leave-to {
+            transform: translateX(-100%);
+        }
+        
+        .limage-enter {
+            transform: translateX(-100%);
+        }
+        
+        .limage-enter-active,
+        .limage-leave-active {
+            transition: all 1s ease;
+        }
+        
+        .limage-leave {
+            transform: translateX(0);
+        }
+        
+        .limage-leave-to {
+            transform: translateX(100%);
+        }
+    </style>
+
+</head>
+
+<body>
+    <div id="app">
+        <div class="wrapper" @mouseenter="stopAnimate" @mouseleave="startAnimate">
+            <transition-group tag="div" class="slide" :name="direction">
+                <a @click.prevent="" href="" v-for="(ele,index) in items" :key="index" v-show="index==mark"><img :src="ele.src" :alt="ele.title" width="502" height="378"></a>
+            </transition-group>
+            <div class="btn">
+                <span @click="toLeft">◀</span>
+                <span @click="autoplay">▶</span>
+            </div>
+            <ul class="pagination">
+                <li v-for="(item,index) in items" :class="{active:index==mark}" @click="changePagination(index)"></li>
+            </ul>
+        </div>
+    </div>
+</body>
+<script src="./node_modules/vue/dist/vue.js"></script>
+<script>
+    let vm = new Vue({
+        el: '#app',
+        data: {
+            direction: 'rimage',
+            timer: null,
+            mark: 0,
+            items: [{
+                title: '第一张',
+                src: './img/1155561925-2.jpg'
+            }, {
+                title: '第二张',
+                src: './img/1155563300-3.jpg'
+            }, {
+                title: '第一张',
+                src: './img/1155561925-2.jpg'
+            }, {
+                title: '第二张',
+                src: './img/1155563300-3.jpg'
+            }, ]
+        },
+        created() {
+            this.play();
+        },
+
+        methods: {
+            toLeft() {
+                this.direction = 'limage';
+                if (this.mark == 0) {
+                    this.mark = 4;
+                }
+                this.mark--;
+
+            },
+            autoplay() {
+                this.direction = 'rimage';
+                this.mark++;
+                if (this.mark == 4) {
+                    this.mark = 0;
+                    return;
+                }
+            },
+            play() {
+                this.timer = window.setInterval(this.autoplay, 3000);
+            },
+            stopAnimate() {
+                clearInterval(this.timer);
+            },
+            startAnimate() {
+                this.play();
+            },
+            changePagination(i) {
+                this.mark = i;
+            }
+
+        }
+    })
+</script>
+
+</html>
